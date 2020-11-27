@@ -146,7 +146,7 @@ func keys(lookup *hkp.Lookup) ([]*openpgp.PrimaryKey, error) {
 	}
 
 	if len(users) != 1 {
-		return nil, errors.New(fmt.Sprintf("expected exactly 1 user to match, but got %v", len(users)))
+		return nil, errors.New(fmt.Sprintf("expected exactly 1 user to match, but got %v: %v", len(users), users))
 	}
 
 	res, err = gitlabClient.Get(keyURL(users[0].ID).String())
