@@ -40,7 +40,7 @@ func init() {
 	}
 
 	gitlabClient = &http.Client{
-		Timeout:   time.Second * 2, // Timeout after 2 seconds
+		Timeout:   time.Second * 4,
 		Transport: transport,
 	}
 }
@@ -78,6 +78,7 @@ func Keyserver(w http.ResponseWriter, r *http.Request) {
 
 	l, err := hkp.ParseLookup(r)
 	if err != nil {
+		log.Printf("lookup: %v", l)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -134,7 +135,9 @@ type key struct {
 }
 
 func keys(lookup *hkp.Lookup) ([]*openpgp.PrimaryKey, error) {
-	res, err := gitlabClient.Get(searchURL(lookup.Search).String())
+	search := searchURL(lookup.Search).String()
+	log.Printf("search: %v", search)
+	res, err := gitlabClient.Get(search)
 	if err != nil {
 		return nil, err
 	}
@@ -149,7 +152,9 @@ func keys(lookup *hkp.Lookup) ([]*openpgp.PrimaryKey, error) {
 		return nil, errors.New(fmt.Sprintf("expected exactly 1 user to match, but got %v: %v", len(users), users))
 	}
 
-	res, err = gitlabClient.Get(keyURL(users[0].ID).String())
+	keys2 := keyURL(users[0].ID).String()
+	log.Printf("keys: %v", keys2)
+	res, err = gitlabClient.Get(keys2)
 	if err != nil {
 		return nil, err
 	}
