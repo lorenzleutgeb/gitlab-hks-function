@@ -62,7 +62,9 @@ func keyURL(userID int) *url.URL {
 func searchURL(search string) *url.URL {
 	result := base()
 	result.Path = path.Join(result.Path, "users")
-	result.Query().Set("search", search)
+	query := result.Query()
+	query.Set("search", search)
+	result.RawQuery = query.Encode()
 	return result
 }
 
