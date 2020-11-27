@@ -75,7 +75,9 @@ func Keyserver(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path != "/pks/lookup" {
+		log.Printf("unknown endpoint hit: %v", r.URL.Path)
 		http.Error(w, "Not Found", http.StatusNotFound)
+		return
 	}
 
 	l, err := hkp.ParseLookup(r)
